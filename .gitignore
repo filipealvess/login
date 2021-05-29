@@ -1,6 +1,9 @@
 # Dependency directories
 node_modules/
 
+# Database directory
+database/
+
 # Miscellaneous
 *.class
 *.log
