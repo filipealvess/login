@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class Signup extends StatefulWidget {
 	@override
@@ -8,6 +10,78 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
 	String email = '';
 	String password = '';
+	String name = '';
+
+	bool checkEmailAddress() {
+		var splitEmail = email.split('@');
+		var atSignIsNotExists = splitEmail.length == 1;
+		var provider = splitEmail.length == 2 ? splitEmail[1] : '';
+
+		if (atSignIsNotExists) {
+			return false;
+		}
+
+		if (provider != 'ifal.edu.br') {
+			return false;
+		}
+
+		return true;
+	}
+
+	void popup(context, title, content) {
+		showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'OK'),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+	}
+
+	Future register(context) async {
+		try {
+		  var response = await http.post(
+		    Uri.parse('http://localhost:3333/signup'),
+		    headers: {
+		      'Content-Type': 'application/json; charset=UTF-8',
+		    },
+		    body: jsonEncode({
+		    	'name': name,
+		      'email': email,
+		      'password': password
+		    })
+		  );
+		  var result = jsonDecode(response.body);
+
+		  if (result['ok']) {
+		  	Navigator.of(context).pushReplacementNamed('/dashboard');
+		  } else if (result['status'] == 1) {
+		  	popup(
+		  		context,
+		  		'Ops',
+		  		'Já existe uma conta utilizando esse endereço de e-mail'
+		  	);
+		  } else {
+		  	popup(
+		  		context,
+		  		'Erro',
+		  		'Sinto muito. Não foi possível criar a sua conta'
+		  	);
+		  }
+		} catch (error) {
+			popup(
+		  	context,
+		  	'Erro',
+		  	'Ocorreu um erro ao tentar conectar ao banco de dados. Tente acessar mais tarde :\')'
+		  );
+		}
+	}
 
 	@override
 	Widget build(BuildContext context) {
@@ -27,6 +101,16 @@ class _SignupState extends State<Signup> {
 		      	  	)
 		      		),
 		      		SizedBox(height: 30),
+		      		TextField(
+		      			onChanged: (text) {
+		      				name = text;
+		      			},
+		      			decoration: InputDecoration(
+		      				labelText: 'Nome',
+		      				border: OutlineInputBorder()
+		      			)
+		      		),
+		      		SizedBox(height: 15),
 		      		TextField(
 		      			onChanged: (text) {
 		      				email = text;
@@ -54,10 +138,24 @@ class _SignupState extends State<Signup> {
 				      		Expanded(
 						      	child: ElevatedButton(
 								      onPressed: () {
-								      	if (email != '' && password != '') {
-								      		print('Conta criada com sucesso!');
+								      	var fieldsAreFilled = name != '' && email != '' && password != '';
+
+								      	if (fieldsAreFilled) {
+								      		if (checkEmailAddress()) {
+								      			register(context);
+								      		} else {
+								      			popup(
+								      				context,
+								      				'Atenção!',
+								      				'Seu e-mail está formatado incorretamente. Todos os e-mails devem conter "@ifal.edu.br"'
+								      			);
+								      		}
 								      	} else {
-								      		print('Preencha todos os campos antes de continuar.');
+								      		popup(
+								      			context,
+								      			'Atenção!',
+								      			'Preencha todos os campos antes de continuar.'
+								      		);
 								    		}
 								    	},
 								    	child: Padding(
