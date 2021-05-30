@@ -11,16 +11,16 @@ class _SigninState extends State<Signin> {
 	String email = '';
 	String password = '';
 
-	void popup(context) {
+	void popup(context, title, content) {
 		showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Login inválido'),
-        content: const Text('E-mail e/ou senha inválidos'),
+        title: Text(title),
+        content: Text(content),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
+            child: Text('OK'),
           ),
         ],
       ),
@@ -28,25 +28,33 @@ class _SigninState extends State<Signin> {
 	}
 
 	Future authenticate(context) async {
-	  var response = await http.post(
-	    Uri.parse('http://localhost:3333/signin'),
-	    headers: {
-	      'Content-Type': 'application/json; charset=UTF-8',
-	    },
-	    body: jsonEncode({
-	      'email': email,
-	      'password': password,
-	    })
-	  );
-	  var result = jsonDecode(response.body);
+		try {
+		  var response = await http.post(
+		    Uri.parse('http://localhost:3333/signin'),
+		    headers: {
+		      'Content-Type': 'application/json; charset=UTF-8',
+		    },
+		    body: jsonEncode({
+		      'email': email,
+		      'password': password,
+		    })
+		  );
+		  var result = jsonDecode(response.body);
 
-	  var authenticatedSuccessfully = result['ok'] && result['status'] == 1;
+		  var authenticatedSuccessfully = result['ok'] && result['status'] == 1;
 
-	  if (authenticatedSuccessfully) {
-	  	Navigator.of(context).pushReplacementNamed('/dashboard');
-	  } else {
-	  	popup(context);
-	  }
+		  if (authenticatedSuccessfully) {
+		  	Navigator.of(context).pushReplacementNamed('/dashboard');
+		  } else {
+		  	popup(context, 'Login inválido', 'E-mail e/ou senha inválidos');
+		  }
+		} catch (error) {
+			popup(
+				context,
+				'Erro',
+				'Ocorreu um erro ao tentar conectar ao banco de dados. Tente acessar mais tarde :\')'
+			);
+		}
 	}
 
 	@override
@@ -98,7 +106,7 @@ class _SigninState extends State<Signin> {
 									      	if (email != '' && password != '') {
 									      		authenticate(context);
 									      	} else {
-									      		print('Preencha todos os campos antes de continuar.');
+									      		popup(context, 'Atenção!', 'Preencha todos os campos antes de continuar');
 									    		}
 									    	},
 									    	child: Padding(
