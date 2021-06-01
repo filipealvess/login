@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dashboard.dart';
 
 class Signin extends StatefulWidget {
 	@override
@@ -44,7 +45,12 @@ class _SigninState extends State<Signin> {
 		  var authenticatedSuccessfully = result['ok'] && result['status'] == 1;
 
 		  if (authenticatedSuccessfully) {
-		  	Navigator.of(context).pushReplacementNamed('/dashboard');
+		  	Navigator.pushReplacement(
+		  		context,
+		  		MaterialPageRoute(
+		  			builder: (context) => Dashboard(result['user']['name'])
+		  		)
+		  	);
 		  } else {
 		  	popup(context, 'Login inválido', 'E-mail e/ou senha inválidos');
 		  }
@@ -60,10 +66,12 @@ class _SigninState extends State<Signin> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-      body: Center(
-      	child: Padding(
-      		padding: const EdgeInsets.all(15.0),
-	      	child: SingleChildScrollView(
+      body: SingleChildScrollView(
+      	child: SizedBox(
+      		width: MediaQuery.of(context).size.width,
+      		height: MediaQuery.of(context).size.height,
+	      	child: Padding(
+      			padding: const EdgeInsets.all(15.0),
 	      		child: Column(
 		      		mainAxisAlignment: MainAxisAlignment.center,
 			      	children: [

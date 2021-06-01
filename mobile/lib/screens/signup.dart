@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dashboard.dart';
 
 class Signup extends StatefulWidget {
 	@override
@@ -60,7 +61,12 @@ class _SignupState extends State<Signup> {
 		  var result = jsonDecode(response.body);
 
 		  if (result['ok']) {
-		  	Navigator.of(context).pushReplacementNamed('/dashboard');
+		  	Navigator.pushReplacement(
+		  		context,
+		  		MaterialPageRoute(
+		  			builder: (context) => Dashboard(name)
+		  		)
+		  	);
 		  } else if (result['status'] == 1) {
 		  	popup(
 		  		context,
@@ -86,100 +92,104 @@ class _SignupState extends State<Signup> {
 	@override
 	Widget build(BuildContext context) {
 		return Scaffold(
-			body: Center(
-				child: Padding(
-      		padding: const EdgeInsets.all(15.0),
-	      	child: Column(
-	      		mainAxisAlignment: MainAxisAlignment.center,
-	      		children: [
-		      		Text(
-		      	  	"CADASTRAR-SE",
-		      	  	style: const TextStyle(
-		      	  		color: Colors.black,
-		      	  		fontWeight: FontWeight.bold,
-		      	  		fontSize: 18.0
-		      	  	)
-		      		),
-		      		SizedBox(height: 30),
-		      		TextField(
-		      			onChanged: (text) {
-		      				name = text;
-		      			},
-		      			decoration: InputDecoration(
-		      				labelText: 'Nome',
-		      				border: OutlineInputBorder()
-		      			)
-		      		),
-		      		SizedBox(height: 15),
-		      		TextField(
-		      			onChanged: (text) {
-		      				email = text;
-		      			},
-		      			keyboardType: TextInputType.emailAddress,
-		      			decoration: InputDecoration(
-		      				labelText: 'E-mail',
-		      				border: OutlineInputBorder()
-		      			)
-		      		),
-		      		SizedBox(height: 15),
-		      		TextField(
-		      			onChanged: (text) {
-		      				password = text;
-		      			},
-		      			obscureText: true,
-		      			decoration: InputDecoration(
-		      				labelText: 'Senha',
-		      				border: OutlineInputBorder()
-		      			)
-		      		),
-		      		SizedBox(height: 15),
-		      		Row(
-			      		children: [
-				      		Expanded(
-						      	child: ElevatedButton(
-								      onPressed: () {
-								      	var fieldsAreFilled = name != '' && email != '' && password != '';
+			body: SingleChildScrollView(
+				child: SizedBox(
+					width: MediaQuery.of(context).size.width,
+      		height: MediaQuery.of(context).size.height,
+					child: Padding(
+	      		padding: const EdgeInsets.all(15.0),
+		      	child: Column(
+		      		mainAxisAlignment: MainAxisAlignment.center,
+		      		children: [
+			      		Text(
+			      	  	"CADASTRAR-SE",
+			      	  	style: const TextStyle(
+			      	  		color: Colors.black,
+			      	  		fontWeight: FontWeight.bold,
+			      	  		fontSize: 18.0
+			      	  	)
+			      		),
+			      		SizedBox(height: 30),
+			      		TextField(
+			      			onChanged: (text) {
+			      				name = text;
+			      			},
+			      			decoration: InputDecoration(
+			      				labelText: 'Nome',
+			      				border: OutlineInputBorder()
+			      			)
+			      		),
+			      		SizedBox(height: 15),
+			      		TextField(
+			      			onChanged: (text) {
+			      				email = text;
+			      			},
+			      			keyboardType: TextInputType.emailAddress,
+			      			decoration: InputDecoration(
+			      				labelText: 'E-mail',
+			      				border: OutlineInputBorder()
+			      			)
+			      		),
+			      		SizedBox(height: 15),
+			      		TextField(
+			      			onChanged: (text) {
+			      				password = text;
+			      			},
+			      			obscureText: true,
+			      			decoration: InputDecoration(
+			      				labelText: 'Senha',
+			      				border: OutlineInputBorder()
+			      			)
+			      		),
+			      		SizedBox(height: 15),
+			      		Row(
+				      		children: [
+					      		Expanded(
+							      	child: ElevatedButton(
+									      onPressed: () {
+									      	var fieldsAreFilled = name != '' && email != '' && password != '';
 
-								      	if (fieldsAreFilled) {
-								      		if (checkEmailAddress()) {
-								      			register(context);
-								      		} else {
-								      			popup(
-								      				context,
-								      				'Atenção!',
-								      				'Seu e-mail está formatado incorretamente. Todos os e-mails devem conter "@ifal.edu.br"'
-								      			);
-								      		}
-								      	} else {
-								      		popup(
-								      			context,
-								      			'Atenção!',
-								      			'Preencha todos os campos antes de continuar.'
-								      		);
-								    		}
-								    	},
-								    	child: Padding(
-								    		padding: const EdgeInsets.all(12.0),
-								    		child: Text('CRIAR CONTA'),
-								    	)
-								    )
-				      		)
-			      		]
-		      		),
-					    SizedBox(height: 15),
-					    Row(
-						    children: [
-							    TextButton(
-				            onPressed: () {
-				            	Navigator.of(context).pushReplacementNamed('/');
-				            },
-				            child: const Text('Já tem uma conta? Faça Login'),
-				          )
-			      		]
-					    )
-		      	]
-	      	)
-	      )
+									      	if (fieldsAreFilled) {
+									      		if (checkEmailAddress()) {
+									      			register(context);
+									      		} else {
+									      			popup(
+									      				context,
+									      				'Atenção!',
+									      				'Seu e-mail está formatado incorretamente. Todos os e-mails devem conter "@ifal.edu.br"'
+									      			);
+									      		}
+									      	} else {
+									      		popup(
+									      			context,
+									      			'Atenção!',
+									      			'Preencha todos os campos antes de continuar.'
+									      		);
+									    		}
+									    	},
+									    	child: Padding(
+									    		padding: const EdgeInsets.all(12.0),
+									    		child: Text('CRIAR CONTA'),
+									    	)
+									    )
+					      		)
+				      		]
+			      		),
+						    SizedBox(height: 15),
+						    Row(
+							    children: [
+								    TextButton(
+					            onPressed: () {
+					            	Navigator.of(context).pushReplacementNamed('/');
+					            },
+					            child: const Text('Já tem uma conta? Faça Login'),
+					          )
+				      		]
+						    )
+			      	]
+		      	)
+		      )
+				)
 			)
 		);
 	}
