@@ -1,44 +1,49 @@
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
+	final String userName;
+  Dashboard(this.userName);
+
 	@override
 	Widget build(BuildContext context) {
-		return Center(
-			child: Padding(
-				padding: const EdgeInsets.all(10.0),
-				child: Column(
-					mainAxisAlignment: MainAxisAlignment.center,
-					children: [
-						Row(
+		return Scaffold(
+			appBar: AppBar(
+				backgroundColor: Colors.blueAccent,
+				title: Text('Dashboard'),
+				actions: [
+					IconButton(
+						icon: const Icon(Icons.exit_to_app_rounded),
+						tooltip: 'Sair',
+						onPressed: () {
+							Navigator.of(context).pushReplacementNamed('/');
+						}
+					)
+				]
+			),
+			body: Column(
+				mainAxisAlignment: MainAxisAlignment.center,
+				children: [
+					Padding(
+						padding: const EdgeInsets.all(15.0),
+						child: Column(
 							children: [
-								TextButton(
-									onPressed: () {
-										Navigator.of(context).pushReplacementNamed('/');
-									},
-									child: Row(
-										children: [
-											Icon(
-									      Icons.arrow_back_rounded,
-									      semanticLabel: 'Seta para a esquerda',
-									    ),
-											Text('SAIR')
-										]
+								Text(
+									'Olá, $userName! Tudo bem?',
+									style: const TextStyle(
+									  fontSize: 18.0
+									)
+								),
+								SizedBox(height: 15.0),
+								Text(
+									'O aplicativo está em construção, em breve teremos novidades!',
+									style: const TextStyle(
+									  fontSize: 16.0
 									)
 								)
 							]
-						),
-						SizedBox(height: 15),
-						Text(
-							'Dashboard',
-							style: const TextStyle(
-						    color: Colors.black,
-						    fontWeight: FontWeight.bold,
-						    fontSize: 18.0,
-						    decoration: TextDecoration.none
-						  )
-						),
-					]
-				)
+						)
+					)
+				]
 			)
 		);
 	}
