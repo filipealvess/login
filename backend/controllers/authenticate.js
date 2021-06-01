@@ -19,6 +19,7 @@ module.exports = function (request, response) {
 			return response.json({
 				ok: true,
 				status: 1,
+				user: row,
 				message: 'Authenticated successfully'
 			});
 		}
